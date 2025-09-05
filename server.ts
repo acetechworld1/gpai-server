@@ -12,5 +12,6 @@ const server = http.createServer(app);
 
 
 server.listen(PORT, () => {
-console.log(`🚀 Server listening on port ${PORT}`);
+    console.log(`🚀 Server listening on port ${PORT}`);
+    console.log(`📖 API Documentation: http://localhost:${PORT}/api-docs`);
 });
