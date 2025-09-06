@@ -1,8 +1,6 @@
-// src/models/NewsletterSubscriber.ts
 import mongoose, { Document, Schema } from 'mongoose';
 import { INewsletterSubscriber } from '../interfaces/INewsLetter';
 
-// Simple document interface - Mongoose Document already provides save(), etc.
 export interface INewsletterSubscriberDocument extends INewsletterSubscriber, Document {}
 
 const newsletterSubscriberSchema: Schema<INewsletterSubscriberDocument> = new mongoose.Schema(

@@ -92,6 +92,7 @@ router.post('/unsubscribe', newsletterController.unsubscribe);
 router.get('/subscribers', newsletterController.getSubscribers);
 
 // TODO: Add Authentication & Authorization(So that only admin can access this endpoint)
+
 /**
  * @swagger
  * /api/newsletter/stats:
