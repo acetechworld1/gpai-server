@@ -12,16 +12,30 @@ const options = {
     },
     servers: [
       {
-        url: 'http://localhost:3000',
-        description: 'Development server',
+        url: process.env.NODE_ENV === 'production' 
+          ? process.env.RENDER_EXTERNAL_URL || 'https://gpai-server.onrender.com'
+          : 'http://localhost:3000',
+        description: process.env.NODE_ENV === 'production' ? 'Production server' : 'Development server',
       },
     ],
   },
-  apis: ['./src/routes/*.ts'],
+  apis: ['./src/routes/*.ts', './dist/routes/*.js'],
 };
 
 const specs = swaggerJsdoc(options);
 
 export const setupSwagger = (app: Application): void => {
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, {
+    swaggerOptions: {
+      url: process.env.NODE_ENV === 'production' 
+        ? `${process.env.RENDER_EXTERNAL_URL || 'https://gpai-server.onrender.com'}/api-docs/swagger.json`
+        : 'http://localhost:3000/api-docs/swagger.json'
+    }
+  }));
+  
+  // Serve swagger.json for clients that need it
+  app.get('/api-docs/swagger.json', (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+    res.send(specs);
+  });
 };
