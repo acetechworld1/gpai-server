@@ -13,6 +13,11 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
+// Trust proxy for Render
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+}
+
 // Setup Swagger
 setupSwagger(app);
 
@@ -25,7 +30,9 @@ app.get('/', (req: Request, res: Response) =>
     success: true,
     message: 'GPAi API Server',
     version: '1.0.0',
-    timestamp: new Date().toISOString()
+    environment: process.env.NODE_ENV || 'development',
+    timestamp: new Date().toISOString(),
+    docs: `${req.protocol}://${req.get('host')}/api-docs`
   })
 );
 
