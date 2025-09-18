@@ -1,24 +1,23 @@
-import { Request, Response } from 'express';
-import User from '../models/User';
+import { Request, Response } from "express";
+import { verifyGoogleToken } from "../services/authService";
 
+export const userAuth = async (req: Request, res: Response) => {
+  try {
+    const { token } = req.body;
+    if (!token) return res.status(400).json({ error: "Token required" });
 
-export const getAllUsers = async (req: Request, res: Response): Promise<void> => {
-try {
-const users = await User.find();
-res.json(users);
-} catch (err: any) {
-res.status(500).json({ error: err.message });
-}
-};
+    const user = await verifyGoogleToken(token);
 
-
-export const createUser = async (req: Request, res: Response): Promise<void> => {
-try {
-const { name, email } = req.body;
-const newUser = new User({ name, email });
-await newUser.save();
-res.status(201).json(newUser);
-} catch (err: any) {
-res.status(500).json({ error: err.message });
-}
+    res.status(200).json({
+      success: true,
+      message: "User authenticated successfully",
+      user,
+    });
+  } catch (error: any) {
+    console.error(error);
+    res.status(401).json({
+      success: false,
+      error: "Invalid or expired Google token",
+    });
+  }
 };
