@@ -4,11 +4,8 @@ import cors from 'cors';
 import routes from './routes';
 import { errorHandler } from './middleware/errorHandler';
 import { setupSwagger } from './config/swagger';
-// import users from './routes/users';
-
 
 const app: Application = express();
-
 
 app.use(helmet());
 app.use(cors());
@@ -23,7 +20,6 @@ if (process.env.NODE_ENV === 'production') {
 setupSwagger(app);
 
 app.use('/api', routes);
-// app.use("/api/user", users);
 
 // Root endpoint
 app.get('/', (req: Request, res: Response) => 

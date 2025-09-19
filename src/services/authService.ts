@@ -1,6 +1,6 @@
 import client from "../config/googleClient";
 import supabase from "../config/supabase";
-import { User } from "../interfaces/user";
+import { User } from "../interfaces/User";
 
 export const verifyGoogleToken = async (token: string): Promise<User> => {
   const ticket = await client.verifyIdToken({

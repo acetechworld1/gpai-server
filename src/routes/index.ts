@@ -4,8 +4,8 @@ import newsletterRouter from './newsletter';
 
 const router = Router();
 
-router.use('/users', usersRouter);
 router.use('/newsletter', newsletterRouter);
+router.use('/user', usersRouter);
 
 // Health check endpoint
 
