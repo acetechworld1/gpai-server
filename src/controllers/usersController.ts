@@ -2,6 +2,9 @@ import { Request, Response } from "express";
 import { verifyGoogleToken } from "../services/authService";
 import Result from "../models/Result";
 import User from "../models/User";
+import { ForecastRequest } from "../interfaces/Forecast";
+import { ForecastService } from "../services/forecastService";
+import { AIContextService } from "../services/aiContextService";
 
 export const userAuth = async (req: Request, res: Response) => {
   try {
@@ -151,6 +154,48 @@ export const getHistory = async (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       error: "Failed to fetch results"
+    });
+  }
+};
+
+export const forecast = async (req: Request, res: Response) => {
+  try {
+    const forecastRequest = req.body as ForecastRequest;
+    
+    // Validate the input
+    ForecastService.validateForecastInput(forecastRequest);
+    
+    // Calculate the forecast
+    const forecastResult = ForecastService.calculateForecast(forecastRequest);
+
+    res.status(200).json({
+      success: true,
+      forecast: forecastResult
+    });
+  } catch (error: any) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      error: "Failed to calculate forecast"
+    });
+  }
+};
+
+export const getAIContext = async (req: Request, res: Response) => {
+  try {
+    const { user_id } = req.query;
+
+    const context = await AIContextService.getFullContext(user_id as string);
+
+    res.status(200).json({
+      success: true,
+      context
+    });
+  } catch (error: any) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      error: "Failed to get AI context"
     });
   }
 };
