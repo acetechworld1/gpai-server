@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { userAuth, saveResult, getHistory } from "../controllers/usersController";
+import { userAuth, saveResult, getHistory, forecast, getAIContext } from "../controllers/usersController";
 
 const router = Router();
 
@@ -214,5 +214,140 @@ router.post("/save-result", saveResult);
  *         description: User ID required
  */
 router.get("/history", getHistory);
+
+/**
+ * @swagger
+ * /api/user/forecast:
+ *   post:
+ *     summary: Calculate projected GPA based on current GPA and planned grades
+ *     tags:
+ *       - Results
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - current_gpa
+ *               - total_credit_units
+ *               - planned_courses
+ *             properties:
+ *               current_gpa:
+ *                 type: number
+ *                 minimum: 0
+ *                 maximum: 5.0
+ *                 example: 3.5
+ *               total_credit_units:
+ *                 type: number
+ *                 example: 72
+ *               planned_courses:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                     - credit_unit
+ *                     - expected_grade
+ *                   properties:
+ *                     credit_unit:
+ *                       type: number
+ *                       example: 3
+ *                     expected_grade:
+ *                       type: string
+ *                       enum: [A, B, C, D, E, F]
+ *                       example: "A"
+ *     responses:
+ *       200:
+ *         description: Forecast calculated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 forecast:
+ *                   type: object
+ *                   properties:
+ *                     projected_gpa:
+ *                       type: number
+ *                     total_credit_units:
+ *                       type: number
+ *                     total_grade_points:
+ *                       type: number
+ *                     existing_grade_points:
+ *                       type: number
+ *                     planned_grade_points:
+ *                       type: number
+ *       400:
+ *         description: Invalid input data
+ */
+router.post("/forecast", forecast);
+
+/**
+ * @swagger
+ * /api/ai/context:
+ *   get:
+ *     summary: Get user profile and GPA history for AI personalization
+ *     tags:
+ *       - AI
+ *     parameters:
+ *       - in: query
+ *         name: user_id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: User ID to fetch context for
+ *     responses:
+ *       200:
+ *         description: Context retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 context:
+ *                   type: object
+ *                   properties:
+ *                     user:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: string
+ *                         name:
+ *                           type: string
+ *                         email:
+ *                           type: string
+ *                         school_name:
+ *                           type: string
+ *                         department:
+ *                           type: string
+ *                         program:
+ *                           type: string
+ *                         matric_number:
+ *                           type: string
+ *                     academic_summary:
+ *                       type: object
+ *                       properties:
+ *                         cumulative_gpa:
+ *                           type: number
+ *                         total_credit_units:
+ *                           type: number
+ *                         total_results:
+ *                           type: number
+ *                     recent_results:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *       400:
+ *         description: User ID required
+ *       404:
+ *         description: User not found
+ */
+router.get("/ai/context", getAIContext);
 
 export default router;
